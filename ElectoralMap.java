@@ -28,7 +28,7 @@ public class ElectoralMap
         public void addVotes(int[] rdi){
             votes = rdi;
             if(rdi[2] < rdi[0] && rdi[2] < rdi[1]){
-                int dc = rdi[1] - rdi[2];
+                int dc = rdi[0] - rdi[1];
                 if(dc > 0){
                     color = Color.RED;
                 }
@@ -43,9 +43,7 @@ public class ElectoralMap
     }
     public static void sampleMethod(String region, int year) throws Exception
     {
-        String fileName = region;
-        String extension = ".txt";
-        File inputFile = new File("input/"+fileName+extension);
+        File inputFile = new File("input/"+region+".txt");
         Scanner inputObject = new Scanner(inputFile);
         double xmin = inputObject.nextDouble();
         double ymin = inputObject.nextDouble();
@@ -84,6 +82,17 @@ public class ElectoralMap
             }
         }
         inputObject.close();
+        File iF = new File("input/"+region+year+".txt");
+        Scanner iO = new Scanner(iF);
+        iO.nextLine(); //gets rid of first line thats useless
+        for(int d = 0; d < n; d++){
+            String[] vd = iO.nextLine().split(",");
+            int[] vs = new int[3];
+            vs[0] = Integer.parseInt(vd[1]);
+            vs[1] = Integer.parseInt(vd[2]);
+            vs[2] = Integer.parseInt(vd[3]);
+            regions.get(vd[0]);
+        }
         for(String key : regions.keySet()){
             for(Subr r : regions.get(key)){
                 StdDraw.polygon(r.getxs(), r.getys());
