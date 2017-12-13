@@ -2,38 +2,43 @@ import java.lang.Exception;
 import java.io.File;
 import java.util.Scanner;
 import static java.lang.System.*;
-import java.awt.*;
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.ArrayList;
 public class ElectoralMap
 {
-    public class Subr{
+    static HashMap<String, ArrayList<Subr>> regions = new HashMap<>();
+    static class Subr{
         private String name;
         private int[] votes;
         private double[] xCors;
         private double[] yCors;
         private Color color;
-       public Subr(double[] xs, double[] ys, String subrname){
+        public Subr(double[] xs, double[] ys, String subrname){
             xCors = xs;
             yCors = ys;
             name = subrname;
         }
+
         public void addVotes(int[] rdi){
+            votes = rdi;
             if(rdi[2] < rdi[0] && rdi[2] < rdi[1]){
                 int dc = rdi[1] - rdi[2];
                 if(dc > 0){
-                    //color = RED;
+                    color = Color.RED;
                 }
                 else{
-                    //color = BLUE;
+                    color = Color.BLUE;
                 }
             }
             else{
-                //color = GRAY;
+                color = Color.GRAY;
             }
         }
     }
-    public static void sampleMethod(String votingdata) throws Exception
+    public static void sampleMethod(String region, int year) throws Exception
     {
-        String fileName = votingdata;
+        String fileName = region;
         String extension = ".txt";
         File inputFile = new File("input/"+fileName+extension);
         Scanner inputObject = new Scanner(inputFile);
@@ -44,7 +49,7 @@ public class ElectoralMap
         double ymax = inputObject.nextDouble();
         inputObject.nextLine();
         int n = inputObject.nextInt();
-        inputObject.nextLine();
+        inputObject.nextLine(); //empty line
         StdDraw.setCanvasSize((((int)xmax-(int)xmin)*512)/((int)ymax-(int)ymin),512);
         StdDraw.setXscale(xmin,xmax);
         StdDraw.setYscale(ymin,ymax);
@@ -52,9 +57,10 @@ public class ElectoralMap
         StdDraw.enableDoubleBuffering();
         StdDraw.show();
         for(int i = 0; i < n; i++){
-            for(int m = 0; m < 3; m++){
-                inputObject.nextLine();
-            }
+            ArrayList<Subr> subs = new ArrayList<Subr>();
+            inputObject.nextLine(); //empty line
+            String subname = inputObject.nextLine();
+            String supname = inputObject.nextLine();
             int x = inputObject.nextInt();
             double[] xs = new double[x];
             double[] ys = new double[x];
@@ -63,7 +69,14 @@ public class ElectoralMap
                 ys[y] = inputObject.nextDouble();
                 inputObject.nextLine();
             }
-            StdDraw.polygon(xs,ys);
+            Subr s = new Subr(xs, ys, subname);
+            if(regions.containsKey(subname)){
+                regions.get(subname).add(s);
+            }
+            else{
+                subs.add(s);
+                regions.put(subname, subs);
+            }
         }
         StdDraw.show();
         inputObject.close();
