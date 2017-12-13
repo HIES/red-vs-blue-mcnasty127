@@ -19,7 +19,12 @@ public class ElectoralMap
             yCors = ys;
             name = subrname;
         }
-
+        public double[] getxs(){
+            return xCors;
+        }
+        public double[] getys(){
+            return yCors;
+        }
         public void addVotes(int[] rdi){
             votes = rdi;
             if(rdi[2] < rdi[0] && rdi[2] < rdi[1]){
@@ -78,7 +83,12 @@ public class ElectoralMap
                 regions.put(subname, subs);
             }
         }
-        StdDraw.show();
         inputObject.close();
+        for(String key : regions.keySet()){
+            for(Subr r : regions.get(key)){
+                StdDraw.polygon(r.getxs(), r.getys());
+            }
+        }
+        StdDraw.show();
     }
 }
