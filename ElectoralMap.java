@@ -100,7 +100,15 @@ public class ElectoralMap
             vs[0] = Integer.parseInt(vd[1]);
             vs[1] = Integer.parseInt(vd[2]);
             vs[2] = Integer.parseInt(vd[3]);
-            if(!regions.containsKey(vd[0])){}
+            boolean flag;
+            for(String key : regions.keySet()){
+                if (key.equals(vd[0])){
+                    flag = true;
+                }
+                else{
+                    flag = false;
+                }
+            if(!regions.containsKey(vd[0]) || flag){}
             else{
                 for(Subr c : regions.get(vd[0])){
                     c.addVotes(vs);
@@ -118,4 +126,5 @@ public class ElectoralMap
         }
         StdDraw.show();
     }
+}
 }
