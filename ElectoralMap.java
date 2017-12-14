@@ -40,6 +40,9 @@ public class ElectoralMap
                 color = Color.GRAY;
             }
         }
+        public Color getColor(){
+            return color;
+        }
     }
     public static void sampleMethod(String region, int year) throws Exception
     {
@@ -82,22 +85,23 @@ public class ElectoralMap
             }
         }
         inputObject.close();
-        File iF = new File("input/"+region+year+".txt");
-        Scanner iO = new Scanner(iF);
-        iO.nextLine(); //gets rid of first line thats useless
-        for(int d = 0; d < n; d++){
-            String[] vd = iO.nextLine().split(",");
-            int[] vs = new int[3];
-            vs[0] = Integer.parseInt(vd[1]);
-            vs[1] = Integer.parseInt(vd[2]);
-            vs[2] = Integer.parseInt(vd[3]);
-            regions.get(vd[0]);
-        }
         for(String key : regions.keySet()){
             for(Subr r : regions.get(key)){
                 StdDraw.polygon(r.getxs(), r.getys());
             }
         }
         StdDraw.show();
+        File iF = new File("input/"+region+year+".txt");
+        Scanner iO = new Scanner(iF);
+        iO.nextLine(); //gets rid of first line thats useless
+        for(int d = 0; d < regions.size(); d++){
+            String line = iO.nextLine();
+            String[] vd = line.split(","); //array of everything on a line of voting data
+            int[] vs = new int[3]; //gonna fill this with the votes for each party
+            vs[0] = Integer.parseInt(vd[1]);
+            vs[1] = Integer.parseInt(vd[2]);
+            vs[2] = Integer.parseInt(vd[3]);
+            regions.get(vd[0]).get(0).addVotes(vs);
+        }
     }
 }
