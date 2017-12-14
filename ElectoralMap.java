@@ -85,12 +85,6 @@ public class ElectoralMap
             }
         }
         inputObject.close();
-        for(String key : regions.keySet()){
-            for(Subr r : regions.get(key)){
-                StdDraw.polygon(r.getxs(), r.getys());
-            }
-        }
-        StdDraw.show();
         File iF = new File("input/"+region+year+".txt");
         Scanner iO = new Scanner(iF);
         iO.nextLine(); //gets rid of first line thats useless
@@ -103,5 +97,12 @@ public class ElectoralMap
             vs[2] = Integer.parseInt(vd[3]);
             regions.get(vd[0]).get(0).addVotes(vs);
         }
+        for(String key : regions.keySet()){
+            for(Subr r : regions.get(key)){
+                StdDraw.setPenColor(regions.get(key).get(0).getColor());
+                StdDraw.filledPolygon(r.getxs(), r.getys());
+            }
+        }
+        StdDraw.show();
     }
 }
