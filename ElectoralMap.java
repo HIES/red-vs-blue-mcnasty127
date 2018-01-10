@@ -7,8 +7,12 @@ import java.util.HashMap;
 import java.util.ArrayList;
 public class ElectoralMap
 {
-    static HashMap<String, ArrayList<Subr>> regions = new HashMap<>();
-    static class Subr{
+   static HashMap<String, HashMap<String, ArrayList<Subr>>> regions = new HashMap<>();
+   static double xmin;
+   static double ymin;
+   static double xmax;
+   static double ymax;
+   static class Subr{
         private String name;
         private int[] votes;
         private double[] xCors;
@@ -47,29 +51,27 @@ public class ElectoralMap
             return color;
         }
     }
-    public static void sampleMethod(String region, int year) throws Exception
-    {
+   public static void geoData(String region) throws Exception{
         File inputFile = new File("input/"+region+".txt");
         Scanner inputObject = new Scanner(inputFile);
-        double xmin = inputObject.nextDouble();
-        double ymin = inputObject.nextDouble();
+        xmin = inputObject.nextDouble();
+        ymin = inputObject.nextDouble();
         inputObject.nextLine();
-        double xmax = inputObject.nextDouble();
-        double ymax = inputObject.nextDouble();
+        xmax = inputObject.nextDouble();
+        ymax = inputObject.nextDouble();
         inputObject.nextLine();
         int n = inputObject.nextInt();
-        inputObject.nextLine(); //empty line
-        StdDraw.setCanvasSize((((int)xmax-(int)xmin)*512)/((int)ymax-(int)ymin),512);
-        StdDraw.setXscale(xmin,xmax);
-        StdDraw.setYscale(ymin,ymax);
-        StdDraw.setPenColor(0,0,0);
-        StdDraw.enableDoubleBuffering();
-        StdDraw.show();
+        inputObject.nextLine();
         for(int i = 0; i < n; i++){
             ArrayList<Subr> subs = new ArrayList<Subr>();
             inputObject.nextLine(); //empty line
             String subname = inputObject.nextLine();
             String supname = inputObject.nextLine();
+            HashMap<String, ArrayList<Subr>> inner = new HashMap<>();
+            if(!regions.containsKey(supname)){
+                regions.put(supname, inner);
+            }
+            else{}
             int x = inputObject.nextInt();
             double[] xs = new double[x];
             double[] ys = new double[x];
@@ -79,21 +81,21 @@ public class ElectoralMap
                 inputObject.nextLine();
             }
             Subr s = new Subr(xs, ys, subname);
-            StdDraw.polygon(xs, ys);
-            StdDraw.show();
-            if(regions.containsKey(subname)){
-                regions.get(subname).add(s);
+            if(regions.get(supname).containsKey(subname)){
+                regions.get(supname).get(subname).add(s);
             }
             else{
                 subs.add(s);
-                regions.put(subname, subs);
+                regions.get(supname).put(subname,subs);
             }
         }
         inputObject.close();
-        File iF = new File("input/"+region+year+".txt");
-        Scanner iO = new Scanner(iF);
-        iO.nextLine(); //gets rid of first line thats useless
-        while(iO.hasNextLine()){
+   }
+   public static void votingData(String region, int year)throws Exception{
+       File iF = new File("input/"+region+year+".txt");
+       Scanner iO = new Scanner(iF);
+       iO.nextLine();
+       while(iO.hasNextLine()){
             String line = iO.nextLine();
             String[] vd = line.split(","); //array of everything on a line of voting data
             int[] vs = new int[3]; //gonna fill this with the votes for each party
@@ -110,21 +112,32 @@ public class ElectoralMap
                 }
             if(!regions.containsKey(vd[0]) || flag){}
             else{
-                for(Subr c : regions.get(vd[0])){
+                for(Subr c : regions.get(region).get(vd[0])){
                     c.addVotes(vs);
                 }
             }
         }
-        for(String key : regions.keySet()){
-            for(Subr r : regions.get(key)){
-                try{
-                    StdDraw.setPenColor(r.getColor());
-                    StdDraw.filledPolygon(r.getxs(), r.getys());
-                }
-                catch(Exception e){}
-            }
-        }
-        StdDraw.show();
     }
-}
+    iO.close();
+   }
+   public static void visualize(){
+       StdDraw.setCanvasSize((((int)xmax-(int)xmin)*512)/((int)ymax-(int)ymin),512);
+       StdDraw.setXscale(xmin,xmax);
+       StdDraw.setYscale(ymin,ymax);
+       StdDraw.enableDoubleBuffering();
+       StdDraw.show();
+       for(String supkey : regions.keySet()){
+           HashMap<String, ArrayList<Subr>> inner = regions.get(supkey);
+           for(String subkey : inner.keySet()){
+               for(Subr r : inner.get(subkey)){
+                   try{
+                       StdDraw.setPenColor(r.getColor());
+                       StdDraw.filledPolygon(r.getxs(), r.getys());
+                    }
+                    catch(Exception e){}
+                }
+            }
+            StdDraw.show();
+        }
+    }
 }
