@@ -92,10 +92,10 @@ public class ElectoralMap
         inputObject.close();
    }
    public static void votingData(String region, int year)throws Exception{
-       File iF = new File("input/"+region+year+".txt");
-       Scanner iO = new Scanner(iF);
-       iO.nextLine();
-       while(iO.hasNextLine()){
+    File iF = new File("input/"+region+year+".txt");
+    Scanner iO = new Scanner(iF);
+    iO.nextLine();
+    while(iO.hasNextLine()){
             String line = iO.nextLine();
             String[] vd = line.split(","); //array of everything on a line of voting data
             int[] vs = new int[3]; //gonna fill this with the votes for each party
@@ -103,20 +103,22 @@ public class ElectoralMap
             vs[1] = Integer.parseInt(vd[2]);
             vs[2] = Integer.parseInt(vd[3]);
             boolean flag;
-            for(String key : regions.keySet()){
-                if (key.equals(vd[0])){
-                    flag = true;
-                }
-                else{
-                    flag = false;
-                }
-            if(!regions.containsKey(vd[0]) || flag){}
-            else{
-                for(Subr c : regions.get(region).get(vd[0])){
-                    c.addVotes(vs);
+            for(String supkey : regions.keySet()){
+                for(String subkey : regions.get(supkey).keySet()){
+                    if (subkey.equals(vd[0])){
+                        flag = true;
+                    }
+                    else{
+                        flag = false;
+                    }
+                    if(!regions.get(supkey).containsKey(vd[0]) || flag){}
+                    else{
+                        for(Subr c : regions.get(supkey).get(vd[0])){
+                            c.addVotes(vs);
+                        }
+                    }
                 }
             }
-        }
     }
     iO.close();
    }
